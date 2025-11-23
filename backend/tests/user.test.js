@@ -14,7 +14,7 @@ beforeAll(async () => {
     email: "admin@test.com",
     password: "admin123",
     phone: "9998887777",
-    address: "HQ",
+    address: "New York",
   });
   token = res.body.accessToken;
   userId = res.body._id;
