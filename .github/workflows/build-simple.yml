@@ -22,11 +22,15 @@ jobs:
       - name: Install root dependencies
         run: npm ci
       
-      - name: Build backend
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Verify backend setup
         working-directory: ./backend
         run: |
-          npm ci
-          npm run build
+          echo "Backend dependencies installed"
+          npm list --depth=0 || true
       
       - name: Build frontend
         working-directory: ./frontend
@@ -35,9 +39,10 @@ jobs:
           npm run build
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'http://localhost:5000' }}
+          CI: true
       
       - name: Build summary
         run: |
-          echo "✅ Backend build completed"
+          echo "✅ Backend setup completed"
           echo "✅ Frontend build completed"
 

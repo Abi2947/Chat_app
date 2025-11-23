@@ -55,7 +55,8 @@ jobs:
         working-directory: ./frontend
         run: npm run build
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'https://api.yourdomain.com' }}
+          CI: true
       
       - name: Deploy to server
         # Add your deployment steps here

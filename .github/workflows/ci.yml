@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    strategy:
+      matrix:
+        component: [backend, frontend]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.component }}/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./${{ matrix.component }}
+        run: npm ci
+      
+      - name: Run tests
+        working-directory: ./${{ matrix.component }}
+        run: |
+          if [ "${{ matrix.component }}" == "backend" ]; then
+            npm test
+          else
+            npm test -- --watchAll=false --coverage
+          fi
+        env:
+          NODE_ENV: test
+          CI: true
+          MONGODB_URI: mongodb://localhost:27017/test_chat_app
+          ACCESS_TOKEN_SECRET: test_secret_key_for_ci
+          REFRESH_TOKEN_SECRET: test_refresh_secret_key_for_ci
+          REACT_APP_API_URL: http://localhost:5000
+      
+      - name: Build (if applicable)
+        working-directory: ./${{ matrix.component }}
+        run: |
+          if [ "${{ matrix.component }}" == "frontend" ]; then
+            npm run build
+          else
+            echo "Backend doesn't require build step"
+          fi
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'http://localhost:5000' }}
+          CI: true
+
