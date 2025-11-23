@@ -43,6 +43,6 @@ jobs:
       
       - name: Build summary
         run: |
-          echo "✅ Backend setup completed"
-          echo "✅ Frontend build completed"
+          echo "Backend setup completed"
+          echo "Frontend build completed"
 

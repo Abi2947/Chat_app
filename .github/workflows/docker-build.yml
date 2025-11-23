@@ -53,6 +53,6 @@ jobs:
       
       - name: Build summary
         run: |
-          echo "✅ Docker build workflow completed"
+          echo "Docker build workflow completed"
           echo "Note: This workflow will build Docker images when Dockerfiles are present"
 
