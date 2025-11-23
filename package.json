@@ -1,0 +1,25 @@
+{
+  "name": "chat_app",
+  "version": "1.0.0",
+  "description": "Chat app build during a learning phase of socket io",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "keywords": [
+    "frontend",
+    "backend",
+    "fullstack"
+  ],
+  "author": "Utsab Gautam",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.17"
+  }
+}
