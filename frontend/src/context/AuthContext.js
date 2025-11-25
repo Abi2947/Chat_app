@@ -55,15 +55,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // FINAL FIXED LOGOUT — WORKS 100%
+  // Logout and redirect to login screen
   const logout = () => {
     localStorage.removeItem("token");
-    setUser(null);
     disconnectSocket?.();
-    // setOnlineUsers?.();
-    // setChats?.([]);
-    // setMessgaes?.([]);
-    // setSelectedChat([]);
+    setUser(null);
+    navigate("/", { replace: true });
   };
 
   return (
