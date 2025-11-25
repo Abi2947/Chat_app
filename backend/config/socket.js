@@ -41,6 +41,42 @@ module.exports = (io) => {
     // Also join to a room with the socket ID for debugging
     socket.join(socket.id);
 
+    // JOIN CHAT ROOM - User joins a specific chat room
+    socket.on("join-chat", async (chatId, callback) => {
+      try {
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+          if (callback) callback("Chat not found");
+          return;
+        }
+
+        // Verify user is a participant
+        const isParticipant = chat.participants.some(
+          (p) => p.toString() === userId
+        );
+
+        if (!isParticipant) {
+          if (callback) callback("Not authorized to join this chat");
+          return;
+        }
+
+        // Join the chat room
+        socket.join(chatId.toString());
+        console.log(`User ${socket.user.username} joined chat room: ${chatId}`);
+        
+        if (callback) callback(null);
+      } catch (err) {
+        console.error("Join chat error:", err);
+        if (callback) callback(err.message || "Failed to join chat");
+      }
+    });
+
+    // LEAVE CHAT ROOM
+    socket.on("leave-chat", (chatId) => {
+      socket.leave(chatId.toString());
+      console.log(`User ${socket.user.username} left chat room: ${chatId}`);
+    });
+
     // USER GOES ONLINE
     socket.on("user-online", (userIdParam) => {
       const userIdStr = userIdParam?.toString() || userId;
@@ -57,7 +93,14 @@ module.exports = (io) => {
 
     // SEND MESSAGE
     socket.on("send-message", async (msg, callback) => {
-      const { chatId, content, sender } = msg;
+      const {
+        chatId,
+        content,
+        sender,
+        messageType = "text",
+        fileUrl,
+        fileName,
+      } = msg;
 
       console.log(`Message received from ${socket.user.username}:`, {
         chatId,
@@ -85,11 +128,32 @@ module.exports = (io) => {
           return;
         }
 
+        if (messageType !== "text" && !fileUrl) {
+          if (callback) callback("Attachment missing");
+          return;
+        }
+
+        if (!content && messageType === "text") {
+          if (callback) callback("Message content required");
+          return;
+        }
+
         // Add the message
+        // const senderId = sender || socket.user._id;
+
         const message = await Message.create({
-          sender: sender || socket.user._id,
+          sender: senderId,
           chat: chatId,
-          content,
+          content: content || "",
+          messageType,
+          fileUrl,
+          fileName,
+          readBy: [
+            {
+              user: senderId,
+              readAt: new Date(),
+            },
+          ],
         });
 
         // Populate sender for sending to clients
@@ -109,24 +173,25 @@ module.exports = (io) => {
           },
           chatId,
           createdAt: message.createdAt,
+          messageType: message.messageType,
+          fileUrl: message.fileUrl,
+          fileName: message.fileName,
         };
 
-        // Send to all participants - ensure consistent string conversion
-        let sentCount = 0;
+        // Send to chat room (all participants in the chat room will receive it)
+        // Also send to individual user rooms as fallback
+        const chatIdStr = chatId.toString();
+        
+        // Emit to chat room (most efficient for group chats)
+        io.to(chatIdStr).emit("receive-message", messagePayload);
+        
+        // Also emit to individual participant rooms as fallback
         chat.participants.forEach((participantId) => {
           const participantIdStr = participantId.toString();
-          console.log(` Broadcasting to participant room: ${participantIdStr}`);
-          
-          // Check if anyone is in this room
-          const room = io.sockets.adapter.rooms.get(participantIdStr);
-          const roomSize = room ? room.size : 0;
-          console.log(`   Room ${participantIdStr} has ${roomSize} socket(s)`);
-          
           io.to(participantIdStr).emit("receive-message", messagePayload);
-          sentCount++;
         });
         
-        console.log(` Message broadcasted to ${sentCount} participant(s) in chat ${chatId}`);
+        console.log(` Message broadcasted to chat room ${chatIdStr} and ${chat.participants.length} participant(s)`);
         
         // Acknowledge to sender - Socket.io callbacks: first arg is error (null for success)
         if (callback) callback(null);
