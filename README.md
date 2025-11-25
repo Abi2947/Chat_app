@@ -198,7 +198,7 @@ REACT_APP_API_URL=http://localhost:5000
 - **401 errors**: Clear localStorage and re-login
 - **Messages not updating**: Check browser console and Socket.io connection
 
-See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for more troubleshooting.
+See [SETUP_GUIDE.md](./Setup_Guide.md) for more troubleshooting.
 
 ## 🚀 Deployment
 
