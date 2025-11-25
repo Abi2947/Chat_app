@@ -48,10 +48,16 @@ backend/
 ├── utils/
 │   └── generateTokens.js  # JWT utilities
 ├── tests/                 # Test files
+│   ├── auth.test.js       # Test case for auth testing
+│   ├── chat.test.js       # Test case for chat testing
+│   └── user.test.js       # Test case for user testing
+├── uploads/               # Contains uploaded images in chat
+│   ├── .gitkeep           # Git file for tracking changes
+│   └── img1               # Uploaded images
 ├── .env                   # Environment variables
-├── .env.example          # Example env file
-├── package.json          # Dependencies
-└── server.js             # Entry point
+├── .env.example           # Example env file
+├── package.json           # Dependencies
+└── server.js              # Entry point
 ```
 
 ## ⚙️ Setup
