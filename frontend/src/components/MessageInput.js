@@ -9,7 +9,7 @@ export default function MessageInput() {
 
   const handleSend = () => {
     if (input.trim()) {
-      sendMessage(input.trim());
+      sendMessage({ content: input.trim() });
       setInput("");
     }
   };
