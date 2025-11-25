@@ -85,6 +85,8 @@ chat_app/
 │   ├── middleware/      # Auth & error handling
 │   ├── models/          # MongoDB schemas
 │   ├── routes/          # API endpoints
+│   ├── tests/           # Backend test codes for auth, user and chats
+│   ├── uploads/         # Contains uploaded images of chats
 │   ├── .env.example     # Environment template
 │   └── server.js        # Entry point
 │
@@ -147,6 +149,11 @@ chat_app/
 3. UI shows green dot for online users
 4. Updates when users disconnect
 
+### Image Uploading Feature
+
+1. Can send and receive image with message
+2. Images will be stored in backend/upload
+
 ## 🛠️ Development
 
 ### Backend Development
@@ -198,7 +205,7 @@ REACT_APP_API_URL=http://localhost:5000
 - **401 errors**: Clear localStorage and re-login
 - **Messages not updating**: Check browser console and Socket.io connection
 
-See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for more troubleshooting.
+See [SETUP_GUIDE.md](./Setup_Guide.md) for more troubleshooting.
 
 ## 🚀 Deployment
 
@@ -223,14 +230,13 @@ MIT
 For issues or questions:
 
 1. Check documentation in each folder's README
-2. Review [SETUP_GUIDE.md](./SETUP_GUIDE.md)
+2. Review [SETUP_GUIDE.md](./Setup_Guide.md)
 3. Check browser console and server logs
 4. Open an issue on GitHub
 
 ## 🎯 Future Enhancements
 
 - [ ] Group chats
-- [ ] File uploads
 - [ ] Message reactions
 - [ ] Typing indicators
 - [ ] Message search
@@ -245,7 +251,9 @@ For issues or questions:
 ![Signup](./backend/public/images/register.png)
 ![Login](./backend/public/images/login.png)
 ![Dashboard](./backend/public/images/dashboard.png)
-![chat](./backend/public/images/chat_2_user.png)
+![Chat](./backend/public/images/chat_2_user.png)
+![Image Feature](./backend/public/images/img_upload.png)
+![Upload Image](./backend/public/images/uploads.png)
 ![Users Data](./backend/public/images/user_data.png)
 ![Task Data](./backend/public/images/chat_data.png)
 
